@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { RotatedPixels } from "./video/RotatedPixels";
 
 type WasmInstance = typeof import("../pkg/index.js");
 
@@ -30,7 +31,6 @@ function useWasm() {
 }
 
 function App() {
-	// const { wasmEngine } = useEngines()
 	const { error, loading, initialize, wasmInstance } = useWasm();
 
 	useEffect(() => {
@@ -50,8 +50,7 @@ function App() {
 	}
 
 	if (wasmInstance) {
-		wasmInstance.greet();
-		return <p>You have 1 new message in your console.</p>;
+		return <RotatedPixels />;
 	}
 
 	return <div></div>;
