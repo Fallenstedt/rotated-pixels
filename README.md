@@ -1,11 +1,11 @@
-# Rust WebAssembly React Template
-![Template Test & Build](https://github.com/Fallenstedt/wasm-react-webpack-template/workflows/Template%20Test%20&%20Build/badge.svg)
+# Pixel Manipulation Using Rust and WebAssembly
 
-A slightly opinionated webpack build to start your next wasm project. 
+Some pixel manipulation done with Rust, WebAssembly, and TS
+
+![](./examples/1.gif)
 
 ## Setup
 
 A simple 'yarn' and 'yarn start' should do the trick. File an issue if it doesn't!
 
-`src` is where your rust code can go. `js` is where you can find your react :) 
-
+`src` is where your rust code can go. `js` is where you can find your js :)
