@@ -18,7 +18,8 @@ crate-type = ["cdylib"]
 [dependencies]
 # The `wasm-bindgen` crate provides the bare minimum functionality needed
 # to interact with JavaScript.
-wasm-bindgen = "0.2.64"
+wasm-bindgen = "0.2.69"
+js-sys = "0.3.46"
 
 # `wee_alloc` is a tiny allocator for wasm that is only ~1K in code size
 # compared to the default allocator's ~10K. However, it is slower than the default
@@ -43,7 +44,7 @@ features = [
   'RtcDataChannelEvent',
   'Window',
 ]
-version = "0.3.40"
+version = "0.3.46"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -54,9 +55,8 @@ console_error_panic_hook = "0.1.5"
 
 # These crates are used for running unit tests.
 [dev-dependencies]
-futures = "0.1.27"
-js-sys = "0.3.40"
-wasm-bindgen-futures = "0.3.22"
+futures = "0.3.8"
+wasm-bindgen-futures = "0.4.19"
 
 [profile.release]
 lto = true

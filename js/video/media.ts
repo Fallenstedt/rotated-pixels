@@ -1,8 +1,12 @@
+import { PixelRotator } from "../../pkg/index.js";
+
+type WasmInstance = typeof import("../../pkg/index.js");
+
 export class Media {
 	private readonly videoElement: HTMLVideoElement;
 	private readonly bufferCanvas: HTMLCanvasElement;
 
-	private targetCanvas?: HTMLCanvasElement;
+	private pixelRotator!: PixelRotator;
 	private animId: number = -1;
 
 	constructor() {
@@ -25,12 +29,30 @@ export class Media {
 		if (this.animId > -1) {
 			window.cancelAnimationFrame(this.animId);
 		}
+		this.videoElement.pause();
+		this.videoElement.srcObject = null;
 	}
 
 	public async connect(targetCanvas: HTMLCanvasElement) {
-		this.targetCanvas = targetCanvas;
-		const videoSteam = await this.getVideoStream();
+		// Get Target Buffer
+		const targetCtx = targetCanvas.getContext("2d");
+		if (!targetCtx) {
+			return Promise.reject(
+				"Unable to render video. Are you sure your web browser is modern?"
+			);
+		}
 
+		// Get WASM
+		try {
+			const wasm: WasmInstance = await import("../../pkg/index");
+			this.pixelRotator = new wasm.PixelRotator();
+		} catch (error) {
+			console.error(error);
+			return Promise.reject("Unable to load wasm");
+		}
+
+		// Get Video Stream
+		const videoSteam = await this.getVideoStream();
 		if (!videoSteam) {
 			return Promise.reject(
 				"Unable to fetch video feed. Are you sure your device has a camera?"
@@ -39,21 +61,23 @@ export class Media {
 		// Play the video stream
 		this.videoElement.srcObject = videoSteam;
 		this.videoElement.play();
-		// Move pixels from video onto buffer canvas
-		// const bufferCtx = this.bufferCanvas.getContext("2d");
-		const bufferCtx = this.targetCanvas.getContext("2d");
 
+		// Get Buffer Ctx
+		const bufferCtx = this.bufferCanvas.getContext("2d");
 		if (!bufferCtx) {
 			return Promise.reject(
 				"Unable to render video. Are you sure your web browser is modern?"
 			);
 		}
 
-		this.renderVideo(bufferCtx);
+		this.renderVideo(bufferCtx, targetCtx);
 	}
 
-	private renderVideo(ctx: CanvasRenderingContext2D): void {
-		const renderVideo = () => {
+	private renderVideo(
+		bufferCtx: CanvasRenderingContext2D,
+		targetCtx: CanvasRenderingContext2D
+	): void {
+		const renderVideo = (now: number) => {
 			this.animId = window.requestAnimationFrame(renderVideo);
 
 			if (this.videoElement.readyState < this.videoElement.HAVE_CURRENT_DATA) {
@@ -66,11 +90,24 @@ export class Media {
 			) {
 				return;
 			}
+			// Move pixels from video onto buffer canvas
+			bufferCtx.drawImage(this.videoElement, 0, 0);
 
-			ctx.drawImage(this.videoElement, 0, 0);
+			// Then draw buffer canvas pixels onto target canvas
+			targetCtx.putImageData(
+				new ImageData(
+					this.pixelRotator.rotate_pixels(
+						bufferCtx.getImageData(0, 0, 640, 480).data
+					),
+					640,
+					480
+				),
+				0,
+				0
+			);
 		};
 
-		this.animId = window.requestAnimationFrame(() => renderVideo());
+		this.animId = window.requestAnimationFrame(renderVideo);
 	}
 
 	private async getVideoStream(): Promise<MediaStream | null> {

@@ -1,7 +1,7 @@
 mod macros;
 mod utils;
 
-mod greet;
+mod pixel_rotator;
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, this uses `wee_alloc` as the global
