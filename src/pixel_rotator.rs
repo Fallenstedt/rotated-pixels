@@ -39,8 +39,23 @@ impl PixelRotator {
         pixels
     } 
 
-    fn create_image_data(&self, data: Clamped<Vec<u8>>) {
-        let imageData = ImageData::new_with_u8_clamped_array_and_sh(data, 640, 480);
+    #[wasm_bindgen(method)]
+    pub fn rotate_pixels_2(&self) {         
+        let manipulated_buffer_data = self.manipulate_pixels();
+        let new_image_data = &self.create_image_data(manipulated_buffer_data);
+        
+        &self.put_image_data_onto_target(new_image_data);
+    } 
+
+    fn put_image_data_onto_target(&self, data: &ImageData) {
+        &self.target_ctx.put_image_data(data, 0.0, 0.0).unwrap();
+    }
+
+    fn create_image_data(&self, mut data: Clamped<Vec<u8>>) -> ImageData {
+        match  ImageData::new_with_u8_clamped_array_and_sh(Clamped(data.as_mut_slice()), 640, 480) {
+            Ok(data) => data,
+            Err(_err) => panic!("Failed to create image data")
+        }
     }
 
 
@@ -58,7 +73,6 @@ impl PixelRotator {
                 buffer_data[i] = 96;
             }
         }
-        
         buffer_data
     }
     

@@ -92,7 +92,7 @@ export class Media {
 
 			// Rust get pixels from bufferCtx
 			// Rust move maipulated pixels to targetCtx
-
+			this.pixelRotator.rotate_pixels_2();
 			// targetCtx.putImageData(
 			// 	new ImageData(
 			// 		this.pixelRotator.rotate_pixels(
