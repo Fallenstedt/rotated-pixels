@@ -89,21 +89,7 @@ export class Media {
 			}
 			// Move pixels from video onto buffer canvas
 			bufferCtx.drawImage(this.videoElement, 0, 0);
-
-			// Rust get pixels from bufferCtx
-			// Rust move maipulated pixels to targetCtx
 			this.pixelRotator.rotate_pixels_2();
-			// targetCtx.putImageData(
-			// 	new ImageData(
-			// 		this.pixelRotator.rotate_pixels(
-			// 			bufferCtx.getImageData(0, 0, 640, 480).data
-			// 		),
-			// 		640,
-			// 		480
-			// 	),
-			// 	0,
-			// 	0
-			// );
 		};
 
 		this.animId = window.requestAnimationFrame(renderVideo);
