@@ -42,10 +42,18 @@ export class Media {
 			);
 		}
 
+		// Get Buffer Ctx
+		const bufferCtx = this.bufferCanvas.getContext("2d");
+		if (!bufferCtx) {
+			return Promise.reject(
+				"Unable to render video. Are you sure your web browser is modern?"
+			);
+		}
+
 		// Get WASM
 		try {
 			const wasm: WasmInstance = await import("../../pkg/index");
-			this.pixelRotator = new wasm.PixelRotator();
+			this.pixelRotator = new wasm.PixelRotator(bufferCtx, targetCtx);
 		} catch (error) {
 			console.error(error);
 			return Promise.reject("Unable to load wasm");
@@ -62,21 +70,10 @@ export class Media {
 		this.videoElement.srcObject = videoSteam;
 		this.videoElement.play();
 
-		// Get Buffer Ctx
-		const bufferCtx = this.bufferCanvas.getContext("2d");
-		if (!bufferCtx) {
-			return Promise.reject(
-				"Unable to render video. Are you sure your web browser is modern?"
-			);
-		}
-
-		this.renderVideo(bufferCtx, targetCtx);
+		this.renderVideo(bufferCtx);
 	}
 
-	private renderVideo(
-		bufferCtx: CanvasRenderingContext2D,
-		targetCtx: CanvasRenderingContext2D
-	): void {
+	private renderVideo(bufferCtx: CanvasRenderingContext2D): void {
 		const renderVideo = (now: number) => {
 			this.animId = window.requestAnimationFrame(renderVideo);
 
@@ -93,18 +90,20 @@ export class Media {
 			// Move pixels from video onto buffer canvas
 			bufferCtx.drawImage(this.videoElement, 0, 0);
 
-			// Then draw buffer canvas pixels onto target canvas
-			targetCtx.putImageData(
-				new ImageData(
-					this.pixelRotator.rotate_pixels(
-						bufferCtx.getImageData(0, 0, 640, 480).data
-					),
-					640,
-					480
-				),
-				0,
-				0
-			);
+			// Rust get pixels from bufferCtx
+			// Rust move maipulated pixels to targetCtx
+
+			// targetCtx.putImageData(
+			// 	new ImageData(
+			// 		this.pixelRotator.rotate_pixels(
+			// 			bufferCtx.getImageData(0, 0, 640, 480).data
+			// 		),
+			// 		640,
+			// 		480
+			// 	),
+			// 	0,
+			// 	0
+			// );
 		};
 
 		this.animId = window.requestAnimationFrame(renderVideo);

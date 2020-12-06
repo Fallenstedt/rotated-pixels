@@ -30,18 +30,8 @@ wee_alloc = {version = "0.4.2", optional = true}
 features = [
   'console',
   'CanvasRenderingContext2d',
-  'Document',
-  'EventTarget',
-  'Element',
-  'HtmlCanvasElement',
-  'HtmlVideoElement',
-  'HtmlElement',
   'ImageData',
-  'MediaStream',
-  'MessageEvent',
-  'Performance',
-  'RtcDataChannel',
-  'RtcDataChannelEvent',
+  'Document',
   'Window',
 ]
 version = "0.3.46"
