@@ -89,7 +89,12 @@ export class Media {
 			}
 			// Move pixels from video onto buffer canvas
 			bufferCtx.drawImage(this.videoElement, 0, 0);
-			this.pixelRotator.rotate_pixels_2();
+			try {
+				this.pixelRotator.rotate_pixels();
+			} catch (error) {
+				console.error("Something exploded in wasm", error);
+				this.disconnect();
+			}
 		};
 
 		this.animId = window.requestAnimationFrame(renderVideo);
