@@ -26,7 +26,7 @@ impl PixelRotator {
         let manipulated_buffer_data = self.make_pink();
         let new_image_data = &self.create_image_data(manipulated_buffer_data);
         
-        &self.put_image_data_onto_target(new_image_data);
+        self.put_image_data_onto_target(new_image_data);
     } 
 
     fn put_image_data_onto_target(&self, data: &ImageData) {
@@ -34,12 +34,9 @@ impl PixelRotator {
     }
 
     fn create_image_data(&self, mut data: Clamped<Vec<u8>>) -> ImageData {
-        // how to handle this error? This is catastrophic. 
-        // Should we set an error property on the instance so JS can see this message?
-        match  ImageData::new_with_u8_clamped_array_and_sh(Clamped(data.as_mut_slice()), 640, 480) {
-            Ok(data) => data,
-            Err(_err) => panic!("Failed to create image data")
-        }
+        ImageData::new_with_u8_clamped_array_and_sh(
+            Clamped(data.as_mut_slice()), 640, 480
+        ).expect("image must be created")
     }
 
 
@@ -62,12 +59,9 @@ impl PixelRotator {
     
 
     fn get_buffer_image_data(&self) -> Clamped<Vec<u8>> {
-        let image_data = match self.buffer_ctx.get_image_data(0.0, 0.0, 640.0, 480.0) {
-            Ok(d) => d,
-            Err(_err) => panic!("failed to fetch buffer image data")
-        };
-        
-        image_data.data()
+        self.buffer_ctx.get_image_data(0.0, 0.0, 640.0, 480.0)
+            .expect("buffer canvas should have data")
+            .data()
     }
 }
 
