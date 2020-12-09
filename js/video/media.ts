@@ -1,4 +1,4 @@
-import { PixelRotator } from "../../pkg/index.js";
+import { PixelManager } from "../../pkg/index.js";
 
 type WasmInstance = typeof import("../../pkg/index.js");
 
@@ -6,7 +6,7 @@ export class Media {
 	private readonly videoElement: HTMLVideoElement;
 	private readonly bufferCanvas: HTMLCanvasElement;
 
-	private pixelRotator!: PixelRotator;
+	private pixelManager!: PixelManager;
 	private animId: number = -1;
 
 	constructor() {
@@ -53,7 +53,7 @@ export class Media {
 		// Get WASM
 		try {
 			const wasm: WasmInstance = await import("../../pkg/index");
-			this.pixelRotator = new wasm.PixelRotator(bufferCtx, targetCtx);
+			this.pixelManager = new wasm.PixelManager(bufferCtx, targetCtx);
 		} catch (error) {
 			console.error(error);
 			return Promise.reject("Unable to load wasm");
@@ -90,7 +90,7 @@ export class Media {
 			// Move pixels from video onto buffer canvas
 			bufferCtx.drawImage(this.videoElement, 0, 0);
 			try {
-				this.pixelRotator.rotate_pixels();
+				this.pixelManager.rotate_pixels();
 			} catch (error) {
 				console.error("Something exploded in wasm", error);
 				this.disconnect();
