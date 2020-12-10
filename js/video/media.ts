@@ -74,7 +74,7 @@ export class Media {
 	}
 
 	private renderVideo(bufferCtx: CanvasRenderingContext2D): void {
-		const renderVideo = (now: number) => {
+		const renderVideo = () => {
 			this.animId = window.requestAnimationFrame(renderVideo);
 
 			if (this.videoElement.readyState < this.videoElement.HAVE_CURRENT_DATA) {

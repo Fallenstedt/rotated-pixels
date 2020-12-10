@@ -23,7 +23,6 @@ export function RotatedPixels() {
 					ref={targetCanvas}
 					width={640}
 					height={480}
-					style={{ border: "2px solid red" }}
 				></canvas>
 				<button
 					onClick={(e) => {

@@ -22,8 +22,8 @@ impl PixelManager {
     }
 
     #[wasm_bindgen(method)]
-    pub fn rotate_pixels(&self) {         
-        self.pixel_engine.make_buffer_data_pink();
+    pub fn rotate_pixels(&mut self) {         
+        self.pixel_engine.stock_ticker();
     } 
 
 }
